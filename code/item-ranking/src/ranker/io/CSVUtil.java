@@ -77,7 +77,7 @@ public class CSVUtil {
 
 
         try (BufferedWriter writer = Files.newBufferedWriter(FILE_PATH, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-            writer.write("product_id;category_id;cpc;clicks;views;score\n"); //header
+            writer.write("product_id;category_id;cpc;clicks;views;score;groupscore\n"); //header
 
             categoryMap.forEach((k, v) -> {
 
@@ -89,7 +89,8 @@ public class CSVUtil {
                                 item.getCpc() + ";" +
                                 item.getClicks() + ";" +
                                 item.getImpressions() + ";" +
-                                item.getScore()+"\n"); //data
+                                item.getScore() + ";" +
+                                item.getGroupScore()+"\n"); //data
 
                     } catch (IOException e) {
                         e.printStackTrace();

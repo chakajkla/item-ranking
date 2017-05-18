@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class FeatureExtractor {
 
-    public static final double NUM_FEATURES = 4;
+    public static final double NUM_FEATURES = 5;
 
     /***
      * 1.CTR (clicks/impressions)
@@ -25,12 +25,13 @@ public class FeatureExtractor {
      * @param group
      * @return
      */
-    public static double getNormalizedCPC(Item item, ArrayList<Item> group) {
+    public static double getNormalizedCPC(Item item, ArrayList<Item> group, ArrayList<Item> allItems) {
 
-        if(group.size() == 1){
+        if (group.size() == 1) {
             return 1;
         }
 
+        //within category
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
 
@@ -39,7 +40,20 @@ public class FeatureExtractor {
             min = Math.min(min, it.getCpc());
         }
 
-        return (item.getCpc() - min) / (max - min);
+        double within = (item.getCpc() - min) / (max - min);
+
+        //across category
+        max = Double.MIN_VALUE;
+        min = Double.MAX_VALUE;
+
+        for (Item it : allItems) {
+            max = Math.max(max, it.getCpc());
+            min = Math.min(min, it.getCpc());
+        }
+
+        double across = (item.getCpc() - min) / (max - min);
+
+        return (within + across) / 2;
     }
 
     /***
@@ -64,29 +78,86 @@ public class FeatureExtractor {
     /***
      * 4.Normalized profits per view = (cpc * clicks) / impressions (within category)
      */
-    public static double getNormalizedProfit(Item item, ArrayList<Item> group) {
+    public static double getNormalizedProfitPerView(Item item, ArrayList<Item> group, ArrayList<Item> allItems) {
 
-        if(group.size() == 1){
-            return 1;
+        if (group.size() == 1) {
+            if (getProfitPerView(item) != 0) {
+                return 1;
+            }
+            return 0;
         }
 
+        //within category
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
 
         for (Item it : group) {
-            double prof = getProfit(it);
-            max = Math.max(max, prof);
-            min = Math.min(min, prof);
+            max = Math.max(max, getProfitPerView(it));
+            min = Math.min(min, getProfitPerView(it));
         }
 
-        return (getProfit(item) - min) / (max - min);
+        double within = (getProfitPerView(item) - min) / (max - min);
+
+        //across category
+        max = Double.MIN_VALUE;
+        min = Double.MAX_VALUE;
+
+        for (Item it : allItems) {
+            max = Math.max(max, getProfitPerView(it));
+            min = Math.min(min, getProfitPerView(it));
+        }
+
+        double across = (getProfitPerView(item) - min) / (max - min);
+
+        return (within + across) / 2;
+    }
+
+    public static double getProfitPerView(Item item) {
+        if (item.getImpressions() == 0) {
+            return 0;
+        }
+        return (item.getCpc() * item.getClicks()) / item.getImpressions();
+    }
+
+    public static double getNormalizedProfit(Item item, ArrayList<Item> group, ArrayList<Item> allItems) {
+
+        if (group.size() == 1) {
+            if (getProfit(item) != 0) {
+                return 1;
+            }
+            return 0;
+        }
+
+        //within category
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+
+        for (Item it : group) {
+            max = Math.max(max, getProfit(it));
+            min = Math.min(min, getProfit(it));
+        }
+
+        double within = (getProfit(item) - min) / (max - min);
+
+        //across category
+        max = Double.MIN_VALUE;
+        min = Double.MAX_VALUE;
+
+        for (Item it : allItems) {
+            max = Math.max(max, getProfit(it));
+            min = Math.min(min, getProfit(it));
+        }
+
+        double across = (getProfit(item) - min) / (max - min);
+
+        return (within + across) / 2;
     }
 
     public static double getProfit(Item item) {
         if (item.getImpressions() == 0) {
             return 0;
         }
-        return (item.getCpc() * item.getClicks()) / item.getImpressions();
+        return (item.getCpc() * item.getClicks());
     }
 
 }

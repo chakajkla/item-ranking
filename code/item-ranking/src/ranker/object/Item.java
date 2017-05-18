@@ -9,6 +9,13 @@ public class Item {
     private double cpc;
 
     private double score;
+    private double groupScore;
+
+    private double ctrScore;
+    private double cpcScore;
+    private double invScore;
+    private double profitScore;
+    private double ppvScore;
 
     public Item(String _id) {
         this.id = _id;
@@ -57,5 +64,53 @@ public class Item {
 
     public double getScore() {
         return score;
+    }
+
+    public double getGroupScore() {
+        return groupScore;
+    }
+
+    public void setGroupScore(double groupScore) {
+        this.groupScore = groupScore;
+    }
+
+    public double getCtrScore() {
+        return ctrScore;
+    }
+
+    public void setCtrScore(double ctrScore) {
+        this.ctrScore = ctrScore;
+    }
+
+    public double getCpcScore() {
+        return cpcScore;
+    }
+
+    public void setCpcScore(double cpcScore) {
+        this.cpcScore = cpcScore;
+    }
+
+    public double getInvScore() {
+        return invScore;
+    }
+
+    public void setInvScore(double invScore) {
+        this.invScore = invScore;
+    }
+
+    public double getProfitScore() {
+        return profitScore;
+    }
+
+    public void setProfitScore(double profitScore) {
+        this.profitScore = profitScore;
+    }
+
+    public double getPpvScore() {
+        return ppvScore;
+    }
+
+    public void setPpvScore(double ppvScore) {
+        this.ppvScore = ppvScore;
     }
 }
