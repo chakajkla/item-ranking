@@ -1,36 +1,46 @@
+Given features:
 category_id: identifier of the category of the product
 clicks: The number of times this product was clicked
 impressions: The number of times this product was shown to users
 cpc: the amount of money we get per click
+ 
+Feature extraction:
+1.CTR (clicks/impressions)
+2.Normalized cpc (averaged within/across category) 
+3.Inv : If click = 0(clicks + 1 / impressions), 1 otherwise - for punishing item with zero clicks that 
+  was shown a lot and no clicks
+4.Normalized profits per view = (cpc * clicks) / impressions (averaged within/across category)
+5.Normalized profits = cpc * clicks (averaged within/across category)
 
+Explaination:
+
+-These features were extracted based on relevancy (1,3) and profitability (2,4,5) of the items. The 
+idea is rank higher the most relevant and profitable items.
+-Feature 2 and 3 can help wth cold start problem
 
 Scoring Process:
 1.Split items by category id, 
   justification: 
      -users normally view product per category, 
-	 -reduce variance/bias across category - some product category generates more profit,as more views 
+	 -reduce variance/bias across category - some product category generates more profit, more views
 	 -category size impacts views,clicks probability
-2.Extract features and weights for each feature that best represent relevancy and profitabiltiy
+2.Extract each features that best represent relevancy and profitabiltiy
 3.Score is calculated via linear weighted combination averaged with category score (average score of all items in the group). 
 The idea is that if two items from different categories achieved equal score then item from category with better average score
-should be scored higher.
- 
+should be scored higher. 
 
-Feature extraction:
-1.CTR (clicks/impressions)
-2.Normalized cpc (within category) 
-3.Inv : If click = 0(clicks + 1 / impressions), 1 otherwise - for punishing item with zero clicks that 
-  was shown a lot and no clicks
-4.Normalized profits per view = (cpc * clicks) / impressions (within category)
-
-Explaination:
-
--These features were extracted based on relevancy (1,3) and profitability (2,4) of the items. The 
-idea is rank higher the most relevant and profitable items.
--Feature 2 and 3 can help wth cold start problem
+Score = ( ((f1 + f2 + f3 + f4 + f5)/5) + catScore)/2
 
 Short comings:
 -feature weights are equally assigned, we could empirically analyze more optimized weights
+-Category size has a weak negative correlation to the features 
+[ctrScore	-0.077575481
+invScore	-0.128943035
+cpcScore	-0.157505235
+profitScore	-0.102242108
+ppvScore	-0.109140161]
+
+This needs more analysis and could be added to the feature, e.g. items from smaller categories are more relevant and profitable.
 
 Future improvement:
 -collect more data about users to build a user model + user groups
