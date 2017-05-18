@@ -30,7 +30,7 @@ idea is rank higher the most relevant and profitable items.
 -Feature 2 and 3 can help wth cold start problem
 
 Short comings:
--feature weights are 1, we could empirically analyze more optimized weights
+-feature weights are equally assigned, we could empirically analyze more optimized weights
 
 Future improvement:
 -collect more data about users to build a user model + user groups
