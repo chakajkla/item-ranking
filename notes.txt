@@ -1,0 +1,42 @@
+category_id: identifier of the category of the product
+clicks: The number of times this product was clicked
+impressions: The number of times this product was shown to users
+cpc: the amount of money we get per click
+
+
+Scoring Process:
+1.Split items by category id, 
+  justification: 
+     -users normally view product per category, 
+	 -reduce variance/bias across category - some product category generates more profit,as more views 
+	 -category size impacts views,clicks probability
+2.Extract features and weights for each feature that best represent relevancy and profitabiltiy
+3.Score is calculated via linear weighted combination averaged with category score (average score of all items in the group). 
+The idea is that if two items from different categories achieved equal score then item from category with better average score
+should be scored higher.
+ 
+
+Feature extraction:
+1.CTR (clicks/impressions)
+2.Normalized cpc (within category) 
+3.Inv : If click = 0(clicks + 1 / impressions), 1 otherwise - for punishing item with zero clicks that 
+  was shown a lot and no clicks
+4.Normalized profits per view = (cpc * clicks) / impressions (within category)
+
+Explaination:
+
+-These features were extracted based on relevancy (1,3) and profitability (2,4) of the items. The 
+idea is rank higher the most relevant and profitable items.
+-Feature 2 and 3 can help wth cold start problem
+
+Short comings:
+-feature weights are 1, we could empirically analyze more optimized weights
+
+Future improvement:
+-collect more data about users to build a user model + user groups
+-collect more features about product item 
+-extrapolate data from other sources (other websites, calendar), devices, contexts (location)
+-consider UI/platform specific features, e.g. within webpage or mobile devices
+-include cylic pattern (summer/winter) + temporal pattern of item and user
+-optimization with learning to rank (user profile as query -> score as label) to optimize weights
+ with cost function
