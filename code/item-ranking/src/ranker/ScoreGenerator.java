@@ -13,9 +13,6 @@ public class ScoreGenerator {
         generate();
     }
 
-    private static double CAT_WT = 0.4;
-    private static double FEATURE_WT = 0.6;
-
     public static void generate() {
 
         ArrayList<Item> items = CSVUtil.readItems();

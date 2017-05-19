@@ -3,10 +3,14 @@ package ranker;
 import ranker.object.Item;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeatureExtractor {
 
     public static final double NUM_FEATURES = 5;
+
+    public static Map<String, Double> cacheMap = new HashMap<>();
 
     /***
      * 1.CTR (clicks/impressions)
@@ -43,12 +47,21 @@ public class FeatureExtractor {
         double within = (item.getCpc() - min) / (max - min);
 
         //across category
-        max = Double.MIN_VALUE;
-        min = Double.MAX_VALUE;
+        String maxKey = "cpc_max";
+        String minKey = "cpc_min";
 
-        for (Item it : allItems) {
-            max = Math.max(max, it.getCpc());
-            min = Math.min(min, it.getCpc());
+        if (cacheMap.containsKey(maxKey) && cacheMap.containsKey(minKey)) {
+            max = cacheMap.get(maxKey);
+            min = cacheMap.get(minKey);
+        } else {
+            max = Double.MIN_VALUE;
+            min = Double.MAX_VALUE;
+            for (Item it : allItems) {
+                max = Math.max(max, it.getCpc());
+                min = Math.min(min, it.getCpc());
+            }
+            cacheMap.put(maxKey, max);
+            cacheMap.put(minKey, min);
         }
 
         double across = (item.getCpc() - min) / (max - min);
@@ -99,13 +112,23 @@ public class FeatureExtractor {
         double within = (getProfitPerView(item) - min) / (max - min);
 
         //across category
-        max = Double.MIN_VALUE;
-        min = Double.MAX_VALUE;
+        String maxKey = "ppv_max";
+        String minKey = "ppv_min";
 
-        for (Item it : allItems) {
-            max = Math.max(max, getProfitPerView(it));
-            min = Math.min(min, getProfitPerView(it));
+        if (cacheMap.containsKey(maxKey) && cacheMap.containsKey(minKey)) {
+            max = cacheMap.get(maxKey);
+            min = cacheMap.get(minKey);
+        } else {
+            max = Double.MIN_VALUE;
+            min = Double.MAX_VALUE;
+            for (Item it : allItems) {
+                max = Math.max(max, getProfitPerView(it));
+                min = Math.min(min, getProfitPerView(it));
+            }
+            cacheMap.put(maxKey, max);
+            cacheMap.put(minKey, min);
         }
+
 
         double across = (getProfitPerView(item) - min) / (max - min);
 
@@ -140,12 +163,21 @@ public class FeatureExtractor {
         double within = (getProfit(item) - min) / (max - min);
 
         //across category
-        max = Double.MIN_VALUE;
-        min = Double.MAX_VALUE;
+        String maxKey = "profit_max";
+        String minKey = "profit_min";
 
-        for (Item it : allItems) {
-            max = Math.max(max, getProfit(it));
-            min = Math.min(min, getProfit(it));
+        if (cacheMap.containsKey(maxKey) && cacheMap.containsKey(minKey)) {
+            max = cacheMap.get(maxKey);
+            min = cacheMap.get(minKey);
+        } else {
+            max = Double.MIN_VALUE;
+            min = Double.MAX_VALUE;
+            for (Item it : allItems) {
+                max = Math.max(max, getProfit(it));
+                min = Math.min(min, getProfit(it));
+            }
+            cacheMap.put(maxKey, max);
+            cacheMap.put(minKey, min);
         }
 
         double across = (getProfit(item) - min) / (max - min);
